@@ -56,60 +56,86 @@ const lztLogo = "\n" +
 const paymentMethods = {
         "any": {
             "methods": [
-                {"Tether (TRC20)": "TYZummwRaq2KFJcWjW8rw3eiZsFLjaKWYw"},
-                {"TON (The Open Network)": "UQB-yl4o65zi9MdOdCEQ83PF6nZIC0ZfD-roqwzKfBaY_Q-s"},
-                {"BTC (Bitcoin)": "bc1qelx9zythl5xmqzs4jgftyagnnmhqxtt2x9f9x5"},
-                {"BNB (Binance)": "bnb1alfrfft4jh3rmg5dwmjgccdyqydxhtm3fc8cxn"},
-                {"ETH (Ethereum)": "0x270fc6EE9a7f0a491486e784C9be406C36A4F710"},
-                {"Lolz (<a href=https://zelenka.guru>zelenka.guru</a>)": "https://zelenka.guru/payment/balance-transfer?user_id=3958441"}
+                {"trc20": {'title': "Tether (TRC20)", "address": "TYZummwRaq2KFJcWjW8rw3eiZsFLjaKWYw"}},
+                {
+                    "ton": {
+                        'title': "TON (The Open Network)",
+                        "address": "UQB-yl4o65zi9MdOdCEQ83PF6nZIC0ZfD-roqwzKfBaY_Q-s"
+                    }
+                },
+                {"btc": {'title': "BTC (Bitcoin)", "address": "bc1qelx9zythl5xmqzs4jgftyagnnmhqxtt2x9f9x5"}},
+                {"bnb": {'title': "BNB (Binance)", "address": "bnb1alfrfft4jh3rmg5dwmjgccdyqydxhtm3fc8cxn"}},
+                {"eth": {'title': "ETH (Ethereum)", "address": "0x270fc6EE9a7f0a491486e784C9be406C36A4F710"}},
+                {
+                    "lzt": {
+                        'title': "Lolz (<a href=https://zelenka.guru>zelenka.guru</a>)",
+                        "address": "https://zelenka.guru/payment/balance-transfer?user_id=3958441"
+                    }
+                }
             ],
+
             "icons": {
-                "Tether (TRC20)": tetherIcon,
-                "BTC (Bitcoin)": btcIcon,
-                "TON (The Open Network)": tonIcon,
-                "BNB (Binance)": bnbIcon,
-                "ETH (Ethereum)": ethLogo,
-                "Lolz (<a href=https://zelenka.guru>zelenka.guru</a>)": lztLogo
+                "trc20": tetherIcon,
+                "btc": btcIcon,
+                "ton": tonIcon,
+                "bnb": bnbIcon,
+                "eth": ethLogo,
+                "lzt": lztLogo
             },
             "title": "Support cazqev's projects",
             "document__title": "support cazqev's projects"
+        },
+        "test": {
+            "title": "Тестовая страница для доната",
+            "document__title": "test",
+            "methods": [
+                {"tg": {"title": "Telegram", "address": "https://t.me/cazqev"}}
+            ],
+            "icons": {
+
+                "tg": "<svg   class='svg-title' width=\"20\" height=\"20\" id=\"Livello_1\" data-name=\"Livello 1\" xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" viewBox=\"0 0 240 240\"><defs><linearGradient id=\"linear-gradient\" x1=\"120\" y1=\"240\" x2=\"120\" gradientUnits=\"userSpaceOnUse\"><stop offset=\"0\" stop-color=\"#1d93d2\"/><stop offset=\"1\" stop-color=\"#38b0e3\"/></linearGradient></defs><title>Telegram_logo</title><circle cx=\"120\" cy=\"120\" r=\"120\" fill=\"url(#linear-gradient)\"/><path d=\"M81.229,128.772l14.237,39.406s1.78,3.687,3.686,3.687,30.255-29.492,30.255-29.492l31.525-60.89L81.737,118.6Z\" fill=\"#c8daea\"/><path d=\"M100.106,138.878l-2.733,29.046s-1.144,8.9,7.754,0,17.415-15.763,17.415-15.763\" fill=\"#a9c6d8\"/><path d=\"M81.486,130.178,52.2,120.636s-3.5-1.42-2.373-4.64c.232-.664.7-1.229,2.1-2.2,6.489-4.523,120.106-45.36,120.106-45.36s3.208-1.081,5.1-.362a2.766,2.766,0,0,1,1.885,2.055,9.357,9.357,0,0,1,.254,2.585c-.009.752-.1,1.449-.169,2.542-.692,11.165-21.4,94.493-21.4,94.493s-1.239,4.876-5.678,5.043A8.13,8.13,0,0,1,146.1,172.5c-8.711-7.493-38.819-27.727-45.472-32.177a1.27,1.27,0,0,1-.546-.9c-.093-.469.417-1.05.417-1.05s52.426-46.6,53.821-51.492c.108-.379-.3-.566-.848-.4-3.482,1.281-63.844,39.4-70.506,43.607A3.21,3.21,0,0,1,81.486,130.178Z\" fill=\"#fff\"/></svg>"
+            }
         }
     }
 ;
 
 document.addEventListener("DOMContentLoaded", function () {
-    console.log("Page loaded. Created by @cazqev")
+    console.log("Page loaded. Created by @cazqev");
     const urlParams = new URLSearchParams(window.location.search);
     const host = urlParams.get("host");
+    const container = document.querySelector('.container');
 
+    const defaultHost = "any";
 
-    if (host in paymentMethods) {
-        document.title = paymentMethods[host]['document__title'];
+    function loadPaymentInformation(host) {
+        const hostData = paymentMethods[host in paymentMethods ? host : defaultHost];
 
-        const container = document.querySelector('.container');
+        document.title = hostData['document__title'];
         const h1 = document.createElement('h1');
-        h1.textContent = paymentMethods[host]['title'];
+        h1.textContent = hostData['title'];
         container.appendChild(h1);
 
-        paymentMethods[host].methods.forEach((wallet, index) => {
+        hostData.methods.forEach((wallet) => {
+            const walletName = Object.keys(wallet)[0];
+            const walletInfo = wallet[walletName];
+            const walletIcon = hostData.icons[walletName] || "";
+
             const paymentMethod = document.createElement('div');
             paymentMethod.classList.add('payment-method');
 
             const paymentTitle = document.createElement('div');
             paymentTitle.classList.add('payment-title');
-            paymentTitle.textContent = paymentMethods[host]["icons"][Object.keys(wallet)[0]] + Object.keys(wallet)[0] + ":";
+            paymentTitle.innerHTML = `${walletIcon} ${walletInfo.title}:`;
             paymentMethod.appendChild(paymentTitle);
 
             const walletId = document.createElement('div');
             walletId.classList.add('wallet-id');
-            walletId.textContent = Object.values(wallet)[0];
+            walletId.textContent = walletInfo.address;
             paymentMethod.appendChild(walletId);
 
             container.appendChild(paymentMethod);
-        });
 
-        document.querySelectorAll('.wallet-id').forEach(walletElement => {
-            walletElement.addEventListener('click', function () {
+            walletId.addEventListener('click', function () {
                 const selection = window.getSelection();
                 const range = document.createRange();
                 range.selectNodeContents(this);
@@ -120,78 +146,24 @@ document.addEventListener("DOMContentLoaded", function () {
                     document.execCommand('copy');
                     selection.removeAllRanges();
 
-                    // Уведомление о копировании
+                    // Notification for copy
                     Toastify({
                         text: "Copied!",
                         duration: 3000,
                         close: true,
-                        gravity: "top", // `top` or `bottom`
-                        position: 'right', // `left`, `center` or `right`
+                        gravity: "top",
+                        position: 'right',
                         backgroundColor: "linear-gradient(to right, #00c6ff, #0072ff)",
-                        stopOnFocus: true, // Prevents dismissing of toast on hover
+                        stopOnFocus: true,
                     }).showToast();
 
                 } catch (e) {
-                    console.error('Не удалось скопировать реквизиты', e);
-                }
-            });
-        });
-
-    } else {
-        const host = "any"
-        document.title = paymentMethods[host]['document__title'];
-
-        const container = document.querySelector('.container');
-        const h1 = document.createElement('h1');
-        h1.textContent = paymentMethods[host]['title'];
-        container.appendChild(h1);
-
-        paymentMethods[host].methods.forEach((wallet, index) => {
-            const paymentMethod = document.createElement('div');
-            paymentMethod.classList.add('payment-method');
-
-            const paymentTitle = document.createElement('div');
-            paymentTitle.classList.add('payment-title');
-            if (paymentMethods[host]["icons"][Object.keys(wallet)[0]]) {
-               paymentTitle.innerHTML = paymentMethods[host]["icons"][Object.keys(wallet)[0]] + " " + Object.keys(wallet)[0] + ":";
-            } else {
-                paymentTitle.innerHTML = Object.keys(wallet)[0] + ":";
-
-            }
-            paymentMethod.appendChild(paymentTitle);
-
-            const walletId = document.createElement('div');
-            walletId.classList.add('wallet-id');
-            walletId.textContent = Object.values(wallet)[0];
-            paymentMethod.appendChild(walletId);
-
-            container.appendChild(paymentMethod);
-        });
-
-        document.querySelectorAll('.wallet-id').forEach(walletElement => {
-            walletElement.addEventListener('click', function () {
-                const selection = window.getSelection();
-                const range = document.createRange();
-                range.selectNodeContents(this);
-                selection.removeAllRanges();
-                selection.addRange(range);
-
-                try {
-                    document.execCommand('copy');
-                    selection.removeAllRanges();
-
-                    // Уведомление о копировании
-                    Toastify({
-                        text: "Copied!",
-                        duration: 3000,
-                        close: true
-                    }).showToast();
-
-                } catch (e) {
-                    console.error('Не удалось скопировать реквизиты', e);
+                    console.error('Failed to copy wallet address', e);
                 }
             });
         });
     }
-    ;
+
+    // Call the function to load payment information
+    loadPaymentInformation(host);
 });
