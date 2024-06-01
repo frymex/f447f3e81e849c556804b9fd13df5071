@@ -69,7 +69,7 @@ const paymentMethods = {
                 {
                     "lzt": {
                         'title': "Lolz (<a href=https://zelenka.guru>zelenka.guru</a>)",
-                        "address": "https://zelenka.guru/payment/balance-transfer?user_id=3958441"
+                        "address": "https://lzt.market/payment/balance-transfer?user_id=3958441"
                     }
                 }
             ],
